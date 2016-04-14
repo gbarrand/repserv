@@ -1,0 +1,37 @@
+
+if [ "${use_GLX}" = "yes" ] ; then
+  if [ ${build_visual} = "yes" ] ; then
+    echo "bush/use/X11 : cl.exe : GLX not supported."
+    exit
+  fi
+
+  if [ `uname` = Darwin ] ; then
+    use_dirs="/opt/local /usr /usr/X11"
+  else
+    use_dirs="/usr"
+  fi
+  GLX_home=
+  for item in ${use_dirs} ; do
+    if [ -f ${item}/include/GL/glx.h ] ; then
+      GLX_home=${item}
+      break
+    fi
+  done
+  if [ "${GLX_home}" = "" ] ; then
+    echo "bush/use/GLX : include/GL/glx.h not found under directories :"
+    echo "  ${use_dirs}"
+    exit
+  fi
+
+  cppflags="${cppflags} -I${GLX_home}/include"
+  ccflags="${ccflags} -I${GLX_home}/include"
+
+  if [ `uname` = Darwin ] ; then
+    # glX functions are in the below GL lib !
+    libs="${libs} -L${GLX_home}/${lib} -lGL"
+  else
+    # glX functions are in the GL lib !
+    echo dummy > /dev/null
+    #libs="${libs} -L${GLX_home}/${lib} -lGLU -lGL" 
+  fi
+fi

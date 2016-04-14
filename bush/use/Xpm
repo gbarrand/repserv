@@ -1,0 +1,36 @@
+
+if [ "${use_Xpm}" = "yes" ] ; then
+  if [ ${build_visual} = "yes" ] ; then
+    echo "bush/use/Xpm : cl.exe : Xpm not supported."
+    exit
+  fi
+
+  # WARNING : it must be consitent with X11. Else you may have at app startup :
+  #             Error : Unresolved inheritance operation
+  
+  if [ `uname` = Darwin ] ; then
+    use_dirs="/opt/local /usr"
+  else
+    use_dirs="/usr"
+  fi
+  Xpm_home=
+  for item in ${use_dirs} ; do
+    if [ -f ${item}/include/X11/xpm.h ] ; then
+      Xpm_home=${item}
+      break
+    fi
+  done
+  if [ "${Xpm_home}" = "" ] ; then
+    echo "bush/use/Xpm : include/X11/xpm.h not found under directories :"
+    echo "  ${use_dirs}"
+    exit
+  fi
+  #//////////////////////////////////////////////
+  #//////////////////////////////////////////////
+
+  cppflags="${cppflags} -I${Xpm_home}/include"
+  ccflags="${ccflags} -I${Xpm_home}/include"
+
+  libs="${libs} -lXpm"
+
+fi

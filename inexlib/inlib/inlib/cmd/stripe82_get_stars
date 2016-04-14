@@ -1,0 +1,79 @@
+// Copyright (C) 2010, Guy Barrand. All rights reserved.
+// See the file inlib.license for terms.
+
+#ifndef inlib_cmd_stripe82_get_stars
+#define inlib_cmd_stripe82_get_stars
+
+#include "session"
+
+#include "../SDSS"
+#include "../radecs"
+
+namespace inlib {
+namespace cmd {
+
+class stripe82_get_stars_cmd : public base_cmd {
+  typedef base_cmd parent;
+public:
+  virtual void exec(session& a_session,
+                    const std::vector<std::string>& a_args,
+                    std::ostream& a_sout,std::ostream& a_out) {
+    if(a_args.size()!=8) {
+      a_session.reply_failed(a_sout,"stripe82_get_stars_cmd : eight arguments expected.");
+      return;
+    }    
+
+    double radecs[8];
+   {for(unsigned int index=0;index<8;index++) {
+      if(!to<double>(a_args[index],radecs[index])) {
+        a_session.reply_failed(a_sout,"stripe82_get_stars_cmd : argument not a double.");
+        return;
+      }
+    }}
+
+    if(m_catalog.empty()) {
+      SDSS::read_catalog(m_catalog,m_data_dir+"/stripe82calibStars_v2.6.dat");
+    }
+
+    std::vector<SDSS::star> stars;
+    inlib::search_stars(m_catalog,radecs,m_sky_radius,stars);
+    inlib_vforcit(SDSS::star,stars,it) {
+      double ra,dec;
+      (*it).radec(ra,dec);
+      a_out << ra << "," << dec << std::endl; //must be consistent with sg/cfitsio_stars.
+    }
+
+  }
+public:
+  stripe82_get_stars_cmd(const std::string& a_data_dir,double a_sky_radius)
+  :parent()
+  ,m_data_dir(a_data_dir)
+  ,m_sky_radius(a_sky_radius)
+  ,m_catalog()
+  {}
+  virtual ~stripe82_get_stars_cmd(){}
+public:
+  stripe82_get_stars_cmd(const stripe82_get_stars_cmd& a_from)
+  :parent(a_from)
+  ,m_data_dir(a_from.m_data_dir)
+  ,m_sky_radius(a_from.m_sky_radius)
+  ,m_catalog(a_from.m_catalog)  
+  {}
+  stripe82_get_stars_cmd& operator=(const stripe82_get_stars_cmd& a_from){
+    parent::operator=(a_from);
+    m_data_dir = a_from.m_data_dir;
+    m_sky_radius = a_from.m_sky_radius;
+    m_catalog = a_from.m_catalog;
+    return *this;
+  }
+protected:
+  std::string m_data_dir;
+  double m_sky_radius;
+  SDSS::catalog m_catalog;
+};
+
+}}
+
+//inlib_build_use kernel
+
+#endif
