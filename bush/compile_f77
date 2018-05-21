@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # to be sourced from another build script.
 
@@ -22,18 +24,20 @@ for file in $(cat ./f_tmp) ; do
   if [ ${build_do_compile} = "yes" ] ; then
   if [ ${build_verbose} = yes ] ; then
     echo "bush/compile_f77 : do ${file} ..."
-  fi
-  if [ -f ${obj} ] ; then
-    echo "bush/compile_f77 : WARNING : ${obj} already exists."
+    if [ -f ${obj} ] ; then
+      echo "bush/compile_f77 : WARNING : ${obj} already exists."
+    fi
   fi
   if [ ${build_visual} = "yes" ] ; then
-    visual_obj="`echo ${obj} | sed -e 's:/:\\\:g'`"
-    visual_obj="'${visual_obj}'"
-    visual_src=`echo ${file} | sed -e 's:/:\\\:g'`
-    visual_src="'${visual_src}'"
+    if [ "${f77_compiler}" = "" ] ; then
+      echo "bush/compile_f77 : variable f77_compiler not defined."
+      exit
+    fi
+    visual_obj="`cygpath -w -a ${obj}`"
+    visual_src="`cygpath -w -a ${file}`"
 
     /bin/rm -f ./f77_exe_tmp
-    eval ${f77_compiler} ${f77flags} /object=${visual_obj} ${visual_src} > ./f77_exe_tmp
+    "${f77_compiler}" ${f77flags} /object=${visual_obj} ${visual_src} > ./f77_exe_tmp
     use_status=$?;if [ ${use_status} != 0 ] ; then cat ./f77_exe_tmp;/bin/rm -f ./f77_exe_tmp;exit ${use_status}; fi
     /bin/rm -f ./f77_exe_tmp
   else

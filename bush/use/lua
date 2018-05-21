@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_lua}" = "yes" ] ; then
 if [ "${build_use_not_our_lua}" = "yes" ] ; then
@@ -15,10 +17,11 @@ if [ "${use_sys_lua}" = "yes" ] ; then
 fi
 
 if [ "${use_our_lua}" = "yes" ] ; then
-  if [ "${lua_home}" = "" ] ; then
-    echo 'bush/use/lua : variable graphviz_home not defined.'
-    exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/lua : variable ourex_home not defined.';exit
   fi
+  lua_home=${ourex_home}/lua
+
   ccflags="${ccflags} -I${lua_home}/src"
   cppflags="${cppflags} -I${lua_home}/src"
   ourex_pack_name=lua

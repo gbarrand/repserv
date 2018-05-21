@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_GLX}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -10,28 +12,21 @@ if [ "${use_GLX}" = "yes" ] ; then
   else
     use_dirs="/usr"
   fi
-  GLX_home=
-  for item in ${use_dirs} ; do
-    if [ -f ${item}/include/GL/glx.h ] ; then
-      GLX_home=${item}
-      break
-    fi
-  done
-  if [ "${GLX_home}" = "" ] ; then
-    echo "bush/use/GLX : include/GL/glx.h not found under directories :"
-    echo "  ${use_dirs}"
-    exit
+  if [ `uname` = Darwin ] ; then
+    inc_dirs="/opt/local/include /usr/include /usr/X11/include"
+  else
+    inc_dirs="/usr/X11R6/include /usr/include"
   fi
-
-  cppflags="${cppflags} -I${GLX_home}/include"
-  ccflags="${ccflags} -I${GLX_home}/include"
+  inc_to_find=GL/glx.h
+  . ${bush_home}/find_inc
 
   if [ `uname` = Darwin ] ; then
-    # glX functions are in the below GL lib !
-    libs="${libs} -L${GLX_home}/${lib} -lGL"
-  else
+    lib_dirs="/opt/local/${lib} /usr/${lib} /usr/X11/${lib}"
     # glX functions are in the GL lib !
+    lib_to_find=GL
+    . ${bush_home}/find_lib
+  else
     echo dummy > /dev/null
-    #libs="${libs} -L${GLX_home}/${lib} -lGLU -lGL" 
+    # glX functions are in the GL lib !
   fi
 fi

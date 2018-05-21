@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_CoinWin}" = "yes" ] ; then
 if [ "${build_use_not_our_CoinWin}" = "yes" ] ; then
@@ -15,7 +17,12 @@ if [ "${use_sys_CoinWin}" = "yes" ] ; then
 fi
 
 if [ "${use_our_CoinWin}" = "yes" ] ; then
-  cppflags="${cppflags} -DSOWIN_NOT_DLL"
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/CoinWin : variable ourex_home not defined.';exit
+  fi
+  CoinWin_home=${ourex_home}/CoinWin
+  
+  #cppflags="${cppflags} -DSOWIN_NOT_DLL" # not neded anymore.
 
   ourex_pack_name=CoinWin
   . ${bush_home}/use/ourex_use

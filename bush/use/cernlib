@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # beurk, beurk, beurk
 
@@ -144,9 +146,10 @@ if [ "${use_sys_cernlib}" = "yes" ] ; then
 fi
 
 if [ "${use_our_cernlib}" = "yes" ] ; then
-  if [ "${cernlib_home}" = "" ] ; then
-    echo 'bush/use/cernlib : variable cernlib_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/cernlib : variable ourex_home not defined.';exit
   fi
+  cernlib_home=${ourex_home}/cernlib
 
 #  cernlib_incs="-I${cernlib_home}/cxxtools/include"
 #  cernlib_incs="${cernlib_incs} -I${cernlib_home}/cernlib/framework/common"

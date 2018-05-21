@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${build_use_not_our_Python}" = "" ] ; then
   #build_use_not_our_Python=yes #use system python
@@ -41,12 +43,30 @@ if [ "${use_sys_Python}" = "yes" ] ; then
 
   if [ ${build_visual} = "yes" ] ; then
 
-    #Python_home=/cygdrive/c/usr/local/Python27
-    Python_home=c:/usr/local/Python27
-    cppflags="${cppflags} -I${Python_home}/include"
-    libs="${libs} ${Python_home}/libs/python27.lib"
+    if [ -d "c:/usr/local/Python27" ] ; then
+      Python_home=c:/usr/local/Python27
+      cppflags="${cppflags} -I${Python_home}/include"
+      libs="${libs} ${Python_home}/libs/python27.lib"
+      py_exe="${Python_home}/python.exe"
 
-    py_exe="${Python_home}/python.exe"
+    elif [ -d "c:/Python27" ] ; then
+      Python_home=c:/Python27
+      cppflags="${cppflags} -I${Python_home}/include"
+      libs="${libs} ${Python_home}/libs/python27.lib"
+      py_exe="${Python_home}/python.exe"
+
+    elif [ -d "/usr/include/python2.7_cygwin_does_not_work" ] ; then
+      # from cygwin installer, but it does not compile with VisualC++.
+      ccflags="${ccflags}   -I/usr/include/python2.7"
+      cppflags="${cppflags} -I/usr/include/python2.7"
+      libs="${libs} /usr/lib/libpython2.7.dll.a"
+      py_exe="/usr/bin/python"
+
+    else      
+      echo "bush/use/Python : WARNING : Python not found."
+      exit
+    fi
+
 
   elif [ `uname` = Darwin ] ; then
 
@@ -168,9 +188,10 @@ if [ "${use_sys_Python}" = "yes" ] ; then
 fi
 
 if [ "${use_our_Python}" = "yes" ] ; then
-  if [ "${Python_home}" = "" ] ; then
-    echo 'bush/use/Python : variable Python_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/Python : variable ourex_home not defined.';exit
   fi
+  Python_home=${ourex_home}/Python
 
   Python_incs="-I${Python_home}/include/python2.7"
 

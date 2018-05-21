@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_CoinQt}" = "yes" ] ; then
 if [ "${build_use_not_our_CoinQt}" = "yes" ] ; then
@@ -15,6 +17,11 @@ if [ "${use_sys_CoinQt}" = "yes" ] ; then
 fi
 
 if [ "${use_our_CoinQt}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/CoinQt : variable ourex_home not defined.';exit
+  fi
+  CoinQt_home=${ourex_home}/CoinQt
+  
   ourex_pack_name=CoinQt
   . ${bush_home}/use/ourex_use
 fi

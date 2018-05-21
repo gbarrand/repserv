@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 use_our_Getline=no
 
@@ -6,9 +8,11 @@ if [ "${use_Getline}" = "yes" ] ; then
 fi
 
 if [ "${use_our_Getline}" = "yes" ] ; then
-  if [ "${Getline_home}" = "" ] ; then
-    echo 'bush/use/Getline : variable Getline_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/Getline : variable ourex_home not defined.';exit
   fi
+  Getline_home=${ourex_home}/Getline
+  
   ccflags="${ccflags} -I${Getline_home}"
   cppflags="${cppflags} -I${Getline_home}"
 

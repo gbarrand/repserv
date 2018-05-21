@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_Android}" = "yes" ] ; then
 
@@ -6,6 +8,15 @@ if [ "${use_Android}" = "yes" ] ; then
     exit
   fi
 
+  if [ ${build_ndk_vers} = r7 ] ; then
+    echo dummy > /dev/null
+  elif [ ${build_ndk_vers} = r10e ] ; then
+    echo dummy > /dev/null
+  else
+    echo "bush/use/Android : ndk version ${build_ndk_version} not yet supported."
+    exit
+  fi
+  
   cppflags="${cppflags} -I${ndk_home}/sources/android/native_app_glue"
 
   libs="${libs} -L${ndk_platform}/usr/lib -landroid -lEGL"

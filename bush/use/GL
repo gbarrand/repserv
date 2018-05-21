@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_GL}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -13,63 +15,15 @@ if [ "${use_GL}" = "yes" ] ; then
         libs="${libs} -framework CoreFoundation" # CF functions.
       fi
     else
-      GL_home=/usr
-      if [ ! -f ${GL_home}/include/GL/gl.h ] ; then
-        echo "bush/use/GL : ${GL_home}/include/GL/gl.h not found."
-        exit
-      fi
-      cppflags="${cppflags} -I${GL_home}/include"
-      libs="${libs} -L${GL_home}/X11R6/${lib} -lGLU -lGL" 
+      inc_dirs="/usr/include"
+      inc_to_find=GL/gl.h
+      . ${bush_home}/find_inc
 
-      #use_dirs="/usr/${lib} /usr/lib/x86_64-linux-gnu"
-
-      #///////////////////////////////////////////////////
-      #/// GLU : /////////////////////////////////////////
-      #///////////////////////////////////////////////////
-      #use_found=
-      #for item in ${use_dirs} ; do
-      #  if [ -f ${item}/libGLU.${shex} ] ; then
-      #    use_found=${item}/libGLU.${shex}
-      #    break
-      #  fi
-      #done
-      #if [ "${use_found}" = "" ] ; then
-      #  echo "bush/use/GL : liGLU.${shex} not found under directories :"
-      #  echo "  ${use_dirs}"
-      #  exit
-      #fi
-      #libs="${libs} ${use_found}"
-
-      #///////////////////////////////////////////////////
-      #/// GL : //////////////////////////////////////////
-      #///////////////////////////////////////////////////
-      #use_found=
-      #for item in ${use_dirs} ; do
-      #  if [ -f ${item}/libGL.${shex} ] ; then
-      #    use_found=${item}/libGL.${shex}
-      #    break
-      #  fi
-      #done
-      #if [ "${use_found}" = "" ] ; then
-      #  echo "bush/use/GL : liGL.${shex} not found under directories :"
-      # echo "  ${use_dirs}"
-      #  exit
-      #fi
-      #libs="${libs} ${use_found}"
-      #///////////////////////////////////////////////////
-      #///////////////////////////////////////////////////
-      #///////////////////////////////////////////////////
-
-# we should try :
-#      cppflags="${cppflags} `pkg-config --cflags glu`"
-#      cppflags="${cppflags} `pkg-config --cflags gl`"
-#      libs="${libs} `pkg-config --libs glu`"
-#      libs="${libs} `pkg-config --libs gl`"
-
-# ubuntu 12.04 :
-#      cppflags="${cppflags} -I/usr/include"
-#      libs="${libs} /usr/lib/i386-linux-gnu/libGLU.so.1"
-#      libs="${libs} /usr/lib/i386-linux-gnu/libGL.so"
+      lib_dirs="/usr/${lib} /usr/lib/x86_64-linux-gnu"
+      lib_to_find=GLU
+      . ${bush_home}/find_lib
+      lib_to_find=GL
+      . ${bush_home}/find_lib
     fi
   fi
 fi

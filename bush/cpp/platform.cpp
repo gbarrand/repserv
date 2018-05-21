@@ -3,16 +3,13 @@
 
 #include "os"
 
-#include <iostream>
+#include <cstdio>
 #include <cstdlib>
 
-int main() {
-  std::cout << bush::os()
-            << "-"
-            << bush::processor()
-            << "-"
-            << bush::compiler()
-            << std::endl;
+int main(int argc,char** argv) {
+  char compiler[128];
+  bush::compiler(compiler);
+  ::printf("%s-%s-%s\n",bush::os(),bush::processor(),compiler);
   return EXIT_SUCCESS;
 }
 

@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_jpeg}" = "yes" ] ; then
 if [ "${build_use_not_our_jpeg}" = "yes" ] ; then
@@ -30,10 +32,11 @@ if [ "${use_sys_jpeg}" = "yes" ] ; then
 fi
 
 if [ "${use_our_jpeg}" = "yes" ] ; then
-  if [ "${jpeg_home}" = "" ] ; then
-    echo 'bush/use/jpeg : variable jpeg_home not defined.'
-    exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/jpeg : variable ourex_home not defined.';exit
   fi
+  jpeg_home=${ourex_home}/jpeg
+  
   ccflags="${ccflags} -I${jpeg_home}/jpeg"
   cppflags="${cppflags} -I${jpeg_home}/jpeg"
   ourex_pack_name=jpeg

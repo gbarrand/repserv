@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # NOTE : png uses zlib.
 
@@ -44,10 +46,10 @@ if [ "${use_our_png}" = "yes" ] ; then
     fi
   fi
 
-  if [ "${png_home}" = "" ] ; then
-    echo 'bush/use/png : variable png_home not defined.'
-    exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/png : variable ourex_home not defined.';exit
   fi
+  png_home=${ourex_home}/png
 
   ccflags="${ccflags} -I${png_home}/png"
   cppflags="${cppflags} -I${png_home}/png"

@@ -1,3 +1,8 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
+
+# GMP: GNU Multiple Precision Arithmetic Library. ("sudo [apt-get,yum] install gmp-devel").
+# MPFR: GNU Multiple-precision floating-point rounding library. ("sudo [apt-get,yum] install mpfr-devel").
 
 if [ "${use_gmp}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then

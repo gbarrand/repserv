@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 build_use_not_our_boost=yes
 
@@ -52,9 +54,10 @@ if [ "${use_sys_boost}" = "yes" ] ; then
 fi
 
 if [ "${use_our_boost}" = "yes" ] ; then
-  if [ "${boost_home}" = "" ] ; then
-    echo 'bush/use/boost : variable boost_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/boost : variable ourex_home not defined.';exit
   fi
+  boost_home=${ourex_home}/boost
 
   boost_incs="-I${boost_home}"
 

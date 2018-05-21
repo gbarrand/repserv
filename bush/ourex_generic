@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # to be sourced from a ourex/<pack>/build script
 
@@ -9,15 +11,20 @@ if [ ${build_compile} = "yes" ] ; then
 /bin/rm -f c_tmp
 /bin/rm -f cpp_tmp
 
+# for example to put a file in front :
+#echo './source/SoPlotter.cxx' >> cpp_tmp
+
 if [ -d ./source ] ; then
   find ./source -maxdepth 1 -name '*.c' -print >> c_tmp
   find ./source -maxdepth 1 -name '*.cpp' -print >> cpp_tmp
   find ./source -maxdepth 1 -name '*.cxx' -print >> cpp_tmp
+  find ./source -maxdepth 1 -name '*.f' -print >> f_tmp
 fi
 if [ -d ./src ] ; then
   find ./src -maxdepth 1 -name '*.c' -print >> c_tmp
   find ./src -maxdepth 1 -name '*.cpp' -print >> cpp_tmp
   find ./src -maxdepth 1 -name '*.cxx' -print >> cpp_tmp
+  find ./src -maxdepth 1 -name '*.f' -print >> f_tmp
 fi
 
 gen_flags=

@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_HEPVisPython}" = "yes" ] ; then
 if [ "${build_use_not_our_HEPVisPython}" = "yes" ] ; then
@@ -16,9 +18,10 @@ fi
 
 if [ "${use_our_HEPVisPython}" = "yes" ] ; then
 
-  if [ "${HEPVisPython_home}" = "" ] ; then
-    echo 'bush/use/HEPVisPython : variable HEPVisPython_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/HEPVisPython : variable ourex_home not defined.';exit
   fi
+  HEPVisPython_home=${ourex_home}/HEPVisPython
 
   cppflags="${cppflags} -I${HEPVisPython_home}/include"
 

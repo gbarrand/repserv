@@ -21,8 +21,6 @@ build_args=""
 while test $# -ge 1 ; do
   case $1 in
     -h) 
-        echo "Usage :"
-        echo "  UNIX> ./build_web [Options]"
         echo "Options :"
         echo "  -web : build user web pages."
         echo "  -clear : rm *.html, *.png, etc..."
@@ -79,7 +77,7 @@ sed -e "s|@OUTPUT_DIRECTORY@|${web_dir}|g" ./Doxyfile > ./tmp_0;/bin/mv ./tmp_0 
 /bin/cp ${bush_home}/doc/header.html .
 /bin/cp ${bush_home}/doc/footer.html .
 /bin/cp ${bush_home}/doc/doxygen.css .
-/bin/cp ${bush_home}/doc/table.css   .
+/bin/cp ${bush_home}/doc/table.css .
 
 doxygen
 
@@ -90,11 +88,17 @@ cd "${save_dir}"
 /bin/rm -f "${web_dir}"/html/index.html
 
 /bin/cp ./doxygen/index.html "${web_dir}"/.
-/bin/cp ./doxygen/index_lx.html "${web_dir}"/.
 /bin/cp ./doxygen/table.html "${web_dir}"/.
-/bin/cp ${bush_home}/doc/table.css "${web_dir}"/.
+/bin/cp ${bush_home}/doc/table.css "${web_dir}"/html/.
+if [ -f ./doxygen/index_lx.html ] ; then
+  /bin/cp ./doxygen/index_lx.html "${web_dir}"/.
+fi    
 
-/bin/cp ./doxygen/icon.png "${web_dir}"/.
+if [ -f ./doxygen/icon.png ] ; then
+  /bin/cp ./doxygen/icon.png "${web_dir}"/.
+else
+  echo 'file ./doxygen/icon.png not found.'
+fi    
 
 # we take the doxygen.css of the 16.8. Recent
 # doxygen.css makes that the table font is more

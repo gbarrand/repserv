@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # to be sourced from another build script.
 
@@ -62,16 +64,22 @@ else
 
   if [ ${build_shlib} = "yes" ] ; then
     if [ "${build_sdk_ios}" = "yes" ] ; then
-      echo "bush/archive : sdk_ios : we do not build shared lib."
+      if [ ${build_verbose} = yes ] ; then
+        echo "bush/archive : sdk_ios : ${libname} : we do not build shared lib."
+      fi
 
     elif [ "${build_sdk_ios_gnu}" = "yes" ] ; then
-      echo "bush/archive : sdk_ios_gnu : we do not build shared lib."
+      if [ ${build_verbose} = yes ] ; then
+        echo "bush/archive : sdk_ios_gnu : ${libname} : we do not build shared lib."
+      fi
 
     elif [ "${build_sdk_iossim}" = "yes" ] ; then
-      echo "bush/archive : sdk_iossim : we do not build shared lib."
+      if [ ${build_verbose} = yes ] ; then
+        echo "bush/archive : sdk_iossim : ${libname} : we do not build shared lib."
+      fi
 
     elif [ ${build_visual} = "yes" ] ; then
-      #echo "bush/archive : visual : can't build shared lib."
+      #echo "bush/archive : visual : ${libname} : can't build shared lib."
       echo dummy > /dev/null
 
       file_o="${build_path}/${libname}.o"
@@ -119,13 +127,19 @@ else
          fi  
       fi  
 
+      if [ ${build_debug} = "yes" ] ; then
+        archive_linker="${archive_linker} /nologo /DEBUG:FULL" 
+      fi
+
       eval ${archive_linker} /nologo /dll /out:${file_sh} ${file_exp} ${file_a} ${libs}
 
       /bin/rm -f ${file_o} ${file_symbs} ${file_def} ${file_exp} windef.exe
       /bin/rm -f windef.obj windef.exe.manifest
 
     elif [ ${build_sdk_android} = "yes" ] ; then
-      echo "bush/archive : android : we do not build shared lib."
+      if [ ${build_verbose} = yes ] ; then
+        echo "bush/archive : android : ${libname} : we do not build shared lib."
+      fi
 
     else # Mac, Linux :
       file_sh="${build_path}/lib${libname}.${shex}"

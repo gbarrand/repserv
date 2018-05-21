@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 for file in ${mmfiles} ; do echo ${file} >> mm_tmp; done
 
@@ -18,9 +20,9 @@ for file in $(cat mm_tmp) ; do
   if [ ${build_do_compile} = "yes" ] ; then
     if [ ${build_verbose} = yes ] ; then
       echo "bush/compile_mm : do ${file} ..."
-    fi
-    if [ -f ${obj} ] ; then
-      echo "bush/compile_mm : WARNING : ${obj} already exists."
+      if [ -f ${obj} ] ; then
+        echo "bush/compile_mm : WARNING : ${obj} already exists."
+      fi
     fi
     eval ${cpp_compiler} -x objective-c++ -c ${cppflags} ${mmflags} -o ${obj} ${file}
     use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi

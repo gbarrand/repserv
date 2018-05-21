@@ -21,8 +21,6 @@ build_args=""
 while test $# -ge 1 ; do
   case $1 in
     -h) 
-        echo "Usage :"
-        echo "  UNIX> ./dbook_web [Options]"
         echo "Options :"
         echo "  -clear : rm *.html, *.png, etc..."
         echo "  -x : execute with set -x."

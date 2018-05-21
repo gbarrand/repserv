@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_geant4}" = "yes" ] ; then
 if [ "${build_use_not_our_geant4}" = "yes" ] ; then
@@ -71,11 +73,12 @@ fi
 
 
 if [ "${use_our_geant4}" = "yes" ] ; then
-  # geant4 build from ourex/geant4.
+  # geant4 from ourex/geant4.
 
-  if [ "${geant4_home}" = "" ] ; then
-    echo 'bush/use/geant4 : variable geant4_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/geant4 : variable ourex_home not defined.';exit
   fi
+  geant4_home=${ourex_home}/geant4
 
   if [ ! -d ${geant4_home}/include ] ; then
     echo "bush/use/geant4 : ${geant4_home}/include not found."
@@ -83,6 +86,10 @@ if [ "${use_our_geant4}" = "yes" ] ; then
   fi
 
   cppflags="${cppflags} -I${geant4_home}/include/Geant4"
+
+  if [ ${build_visual} = "yes" ] ; then
+    cppflags="${cppflags} -DWIN32"  # for G4Timer.h
+  fi
 
   geant4_build_dir="${geant4_home}/${build_dir}"
 

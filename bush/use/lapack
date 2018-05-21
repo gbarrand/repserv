@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_lapack}" = "yes" ] ; then
 if [ "${build_use_not_our_lapack}" = "yes" ] ; then
@@ -17,42 +19,13 @@ if [ "${use_sys_lapack}" = "yes" ] ; then
     exit
   fi
 
-  use_dirs="/usr"
-  use_dirs="${use_dirs} ${HOME}/usr/local/lapack/3.5.0" # clrlsst.
-  lapack_home=
-  lapack_shex=no
-  for item in ${use_dirs} ; do
-    if [ -f ${item}/lib/liblapack.${shex} ] ; then
-      lapack_home=${item}
-      lapack_shex=yes
-      break
-    fi
-    if [ -f ${item}/lib/liblapack.a ] ; then
-      lapack_home=${item}
-      lapack_shex=no
-      break
-    fi
-  done
-  if [ "${lapack_home}" = "" ] ; then
-    echo "bush/use/lapack : liblapack.${shex} not found under directories :"
-    echo "  ${use_dirs}"
-    exit
-  fi
-
-  if [ "${use_archive}" = "yes" ] ; then
-    if [ ${lapack_shex} = yes ] ; then
-      echo "bush/use/lapack : use_archive=yes but liblapack.a not found. Continue with shared libs."
-      libs="${libs} -L${lapack_home}/lib -llapack -lblas"
-    else
-      libs="${libs} ${lapack_home}/lib/liblapack.a ${lapack_home}/lib/libblas.a"
-    fi
-  else
-    if [ ${lapack_shex} = yes ] ; then
-      libs="${libs} -L${lapack_home}/lib -llapack -lblas"
-    else
-      libs="${libs} ${lapack_home}/lib/liblapack.a ${lapack_home}/lib/libblas.a"
-    fi
-  fi
+  lib_dirs="/usr/${lib} /usr/lib"
+  lib_dirs="${lib_dirs} ${HOME}/usr/local/lapack/3.5.0/${lib}" # clrlsst.
+  
+  lib_to_find=lapack
+  . ${bush_home}/find_lib
+  lib_to_find=blas
+  . ${bush_home}/find_lib
 
 fi
 

@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_swig}" = "yes" ] ; then
 
@@ -10,9 +12,10 @@ if [ "${use_swig}" = "yes" ] ; then
     exit
   fi
 
-  if [ "${pivy_home}" = "" ] ; then
-    echo "bush/use/swig : pivy_home not defined.";exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/pivy : variable ourex_home not defined.';exit
   fi
+  pivy_home=${ourex_home}/pivy
 
 fi
 

@@ -1,22 +1,15 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_dl}" = "yes" ] ; then
 
-  if [ ${build_visual} = "no" ] ; then
+  if [ ${build_visual} = "yes" ] ; then
+    echo dummy > /dev/null
+  else
 
-    use_dirs="/usr/${lib} /usr/lib/x86_64-linux-gnu"
-    use_found=
-    for item in ${use_dirs} ; do
-      if [ -f ${item}/libdl.${shex} ] ; then
-        use_found=${item}/libdl.${shex}
-        break
-      fi
-    done
-    if [ "${use_found}" = "" ] ; then
-      echo "bush/use/dl : lidl.${shex} not found under directories :"
-      echo "  ${use_dirs}"
-      exit
-    fi
-    libs="${libs} ${use_found}"
+    lib_dirs="/usr/${lib} /usr/lib/x86_64-linux-gnu"
+    lib_to_find=dl
+    . ${bush_home}/find_lib
 
   fi
 

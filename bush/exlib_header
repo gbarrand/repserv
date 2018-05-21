@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # Used to build wall_[master,screen]_[X11,Windows,Cocoa] apps.
 # It is a simpler version of app_header.
@@ -11,20 +13,21 @@ fi
 #/// args : ///////////////////////////////////////////
 #//////////////////////////////////////////////////////
 
-build_x11_no_gl=no
 build_no_gl=no
 build_no_wall=no
+build_enforce_vbo=no
 
-inlib_args=
+header_args=
 for arg in ${build_args} ; do
   case ${arg} in
-     -X11_no_gl)  build_x11_no_gl=yes;;
-     -x11_no_gl)  build_x11_no_gl=yes;;
+#     -X11_no_gl)  build_no_gl=yes;;
+#     -x11_no_gl)  build_no_gl=yes;;
      -no_gl)      build_no_gl=yes;;
      -no_wall)    build_no_wall=yes;;
+     -vbo)        build_enforce_vbo=yes;;
      # etc :
-     -*)          inlib_args="${inlib_args} ${arg}";;
-      *)          inlib_args="${inlib_args} ${arg}";;
+     -*)          header_args="${header_args} ${arg}";;
+      *)          header_args="${header_args} ${arg}";;
   esac
 done
 
@@ -32,7 +35,7 @@ done
 #//////////////////////////////////////////////////////
 #//////////////////////////////////////////////////////
 
-build_args="${inlib_args}"
+build_args="${header_args}"
 
 if [ "${ourex_home}" = "" ] ; then ourex_home=${bush_home}/../inexlib/ourex;fi
 
@@ -49,12 +52,16 @@ if [ "${app}" = "" ] ; then
   exit
 fi
 
-if [ ${build_x11_no_gl} = "yes" ] ; then
-  cppflags="${cppflags} -DEXLIB_X11_NO_GL"
+if [ "${build_enforce_vbo}" = "yes" ] ; then
+  cppflags="${cppflags} -DEXLIB_HAS_GL_VBO"
 fi
 
 if [ ${build_no_gl} = "yes" ] ; then
   cppflags="${cppflags} -DEXLIB_NO_GL"
+fi
+
+if [ ${build_inlib_gl} = "yes" ] ; then
+  cppflags="${cppflags} -DEXLIB_INLIB_GL"
 fi
 
 if [ "${build_no_wall}" = "no" ] ; then

@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_SOPHYA}" = "yes" ] ; then
 if [ "${build_use_not_our_SOPHYA}" = "yes" ] ; then
@@ -31,6 +33,11 @@ if [ "${use_sys_SOPHYA}" = "yes" ] ; then
 fi
 
 if [ "${use_our_SOPHYA}" = "yes" ] ; then  
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/SOPHYA : variable ourex_home not defined.';exit
+  fi
+  SOPHYA_home=${ourex_home}/SOPHYA
+
   if [ ${build_visual} = "yes" ] ; then
     cppflags="${cppflags} -I${bush_home}/visual"
   fi

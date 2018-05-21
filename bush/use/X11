@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_X11}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -7,30 +9,21 @@ if [ "${use_X11}" = "yes" ] ; then
 
   # Must be consitent with Motif (under /opt/local if installed with Macport).
 
-  #//////////////////////////////////////////////
-  #/// X11 : ////////////////////////////////////
-  #//////////////////////////////////////////////
   if [ `uname` = Darwin ] ; then
-    use_dirs="/opt/local /usr"
+    inc_dirs="/opt/local/include /usr/include /usr/X11/include"
   else
-    use_dirs="/usr/X11R6 /usr"
+    inc_dirs="/usr/X11R6/include /usr/include"
   fi
-  X11_home=
-  for item in ${use_dirs} ; do
-    if [ -f ${item}/include/X11/X.h ] ; then
-      X11_home=${item}
-      break
-    fi
-  done
-  if [ "${X11_home}" = "" ] ; then
-    echo "bush/use/X11 : include/X11/X.h not found under directories :"
-    echo "  ${use_dirs}"
-    exit
-  fi
+  inc_to_find=X11/X.h
+  . ${bush_home}/find_inc
 
-  cppflags="${cppflags} -I${X11_home}/include"
-  ccflags="${ccflags} -I${X11_home}/include"
-  libs="${libs} -L${X11_home}/${lib} -lX11"
+  if [ `uname` = Darwin ] ; then
+    lib_dirs="/opt/local/${lib} /usr/${lib} /usr/X11/${lib}"
+  else
+    lib_dirs="/usr/X11R6/${lib} /usr/${lib} /usr/lib/x86_64-linux-gnu"
+  fi
+  lib_to_find=X11
+  . ${bush_home}/find_lib
 
 # WARNING : Xpm not found on all machines.
 #  libs="${libs} -lXi -lXext -lXpm -lX11"

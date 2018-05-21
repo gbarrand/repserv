@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # must be sourced from the mgr directory of an app.
 
@@ -19,7 +21,7 @@ fi
 mkdir -p ../Android/res/raw
 
 # maxdepth 1 to not include python lib content.
-find ../comres -name '*' -maxdepth 1 -type f -print > ./comres_tmp
+find ../comres -maxdepth 1 -name '*' -type f -print > ./comres_tmp
 grep -v favicon.ico ./comres_tmp > ./tmp_0;mv ./tmp_0 ./comres_tmp
 ${bush_home}/find_rm ../Android/res/raw '*_*'
 for file in $(cat ./comres_tmp) ; do
@@ -37,12 +39,9 @@ for file in $(cat ./comres_tmp) ; do
 done
 /bin/rm -f ./comres_tmp
 
-if [ -d ../comres/lib ] ; then
-  old_dir=`pwd`
-  cd ${ourex_home}/Python
-  zip -qr lib_py.zip ./lib
-  cd ${old_dir}
-  /bin/mv ${ourex_home}/Python/lib_py.zip ../Android/res/raw/lib_py_zip.zip
+if [ -f ../comres/python_2_7_lib_py.zip ] ; then
+  /bin/rm -f ../Android/res/raw/lib_py_zip.zip
+  /bin/cp ../comres/python_2_7_lib_py.zip ../Android/res/raw/python_2_7_lib_py_zip.zip
 fi
 
 if [ -d ../icons ] ; then

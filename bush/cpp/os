@@ -93,31 +93,30 @@ inline const char* compiler_name() {
 
 namespace bush {
 
-inline char* compiler() {
-  static char s[64];
-  char* pos = s;
+inline void compiler(char a_s[128]) {
+  char* pos = a_s;
   unsigned int l;
   toss(compiler_name(),pos,l);pos += l;
 
 #if defined(__clang__)
-  *pos++ = '_';
+  *pos = '_';pos++;
   tosu<unsigned int>(__clang_major__,pos,l);pos += l;  
   tosu<unsigned int>(__clang_minor__,pos,l);pos += l;
   tosu<unsigned int>(__clang_patchlevel__,pos,l);pos += l;
 #elif defined(__GNUC__)
-  *pos++ = '_';
+  *pos = '_';pos++;
   tosu<unsigned int>(__GNUC__,pos,l);pos += l;  
   tosu<unsigned int>(__GNUC_MINOR__,pos,l);pos += l;
   tosu<unsigned int>(__GNUC_PATCHLEVEL__,pos,l);pos += l;
 #elif defined(_MSC_VER)
-  *pos++ = '_';
+  *pos = '_';pos++;
   tosu<unsigned int>(_MSC_VER,pos,l);pos += l;  
   //_mfc_
   //tosu<unsigned int>(_MFC_VER,pos,l);pos += l;
 #elif defined(__alpha)
 #else
 #endif
-  return s;
+  *pos = 0;
 }
 
 }

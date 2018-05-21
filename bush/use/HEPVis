@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_HEPVis}" = "yes" ] ; then
 if [ "${build_use_not_our_HEPVis}" = "yes" ] ; then
@@ -15,6 +17,11 @@ if [ "${use_sys_HEPVis}" = "yes" ] ; then
 fi
 
 if [ "${use_our_HEPVis}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/HEPVis : variable ourex_home not defined.';exit
+  fi
+  HEPVis_home=${ourex_home}/HEPVis
+  
   ourex_pack_name=HEPVis
   . ${bush_home}/use/ourex_use
 fi

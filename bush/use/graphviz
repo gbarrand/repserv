@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_graphviz}" = "yes" ] ; then
 if [ "${build_use_not_our_graphviz}" = "yes" ] ; then
@@ -24,9 +26,10 @@ if [ "${use_sys_graphviz}" = "yes" ] ; then
 fi
 
 if [ "${use_our_graphviz}" = "yes" ] ; then
-  if [ "${graphviz_home}" = "" ] ; then
-    echo 'bush/use/graphviz : variable graphviz_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/graphviz : variable ourex_home not defined.';exit
   fi
+  graphviz_home=${ourex_home}/graphviz
 
   gv_incs="-I${graphviz_home}/lib/cdt"
   gv_incs="${gv_incs} -I${graphviz_home}/lib/graph"

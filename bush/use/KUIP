@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_KUIP}" = "yes" ] ; then
 if [ "${build_use_not_our_KUIP}" = "yes" ] ; then
@@ -15,6 +17,11 @@ if [ "${use_sys_KUIP}" = "yes" ] ; then
 fi
 
 if [ "${use_our_KUIP}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/KUIP : variable ourex_home not defined.';exit
+  fi
+  KUIP_home=${ourex_home}/KUIP
+  
   ourex_pack_name=KUIP
   . ${bush_home}/use/ourex_use
 fi

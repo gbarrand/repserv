@@ -1,5 +1,8 @@
 #!/bin/sh -f
 
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
+
 bush_home=`dirname $0`
 
 ${bush_home}/check_app ndk-build 'ndk-build program not found.'
@@ -25,18 +28,22 @@ build_java=yes
 build_sign=yes # due to a bug in SDK 22 and Android 2.2
 build_sign=no
 build_install=yes
+build_touch=no
 
 build_pwd=android
 
 while test $# -ge 1 ; do
   case $1 in
-    -g) build_debug=yes;;
-    -x) build_set_x=yes;;
-    -v) build_verbose=yes;;
+     -g) build_debug=yes;;
+ -debug) build_debug=yes;;
+     -x) build_set_x=yes;;
+     -v) build_verbose=yes;;
 
+    -no_ndk)     build_ndk=no;;
     -java)       build_ndk=no;build_sign=no;build_install=no;;
     -install)    build_ndk=no;build_java=no;build_sign=no;;
     -no_install) build_install=no;;
+    -touch)      build_touch=yes;;
     -*) echo "bush/and_build : unknown option : $1" ; exit ;;
   esac
   shift
@@ -56,11 +63,17 @@ to=./src/fr/in2p3/lal/${app}
 if [ ${build_ndk} = "yes" ] ; then
   /bin/rm -f tmp_0;sed -e "s:EXLIB_APP:${app}:g" ${from}/Main_java > tmp_0;/bin/mv tmp_0 ${to}/Main.java
   /bin/rm -f tmp_0;sed -e "s:EXLIB_APP:${app}:g" ${from}/app_main_cpp > tmp_0;/bin/mv tmp_0 ./main.cpp
-  if [ ${build_verbose} = "yes" ] ; then
+  if [ ${build_touch} = "yes" ] ; then
+    ndk-build -t
+  elif [ ${build_verbose} = "yes" ] ; then
     ndk-build V=1
   else
     ndk-build
   fi
+fi
+
+if [ ${build_java} = "yes" ] ; then
+  /bin/rm -f tmp_0;sed -e "s:EXLIB_APP:${app}:g" ${from}/Main_java > tmp_0;/bin/mv tmp_0 ${to}/Main.java
 fi
 
 target=release

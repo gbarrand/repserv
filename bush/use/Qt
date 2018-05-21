@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_Qt}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -43,6 +45,18 @@ if [ "${use_Qt}" = "yes" ] ; then
       libs="${libs} -F${Qt_home}/lib -framework QtWidgets"
       libs="${libs} -framework QtWidgets -framework QtOpenGL"
       libs="${libs} -framework QtGui -framework QtCore"
+
+      moc_exe="${Qt_home}/bin/moc"
+
+      #Qt_ld_library_path="${Qt_home}/lib"
+
+    elif [ -d /opt/local/libexec/qt4/include/Qt ] ; then
+
+      Qt_home=/opt/local/libexec/qt4
+
+      cppflags="${cppflags} -I${Qt_home}/include"
+
+      libs="${libs} -L${Qt_home}/lib -lQtOpenGL -lQtGUI -lQtCore"
 
       moc_exe="${Qt_home}/bin/moc"
 

@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 build_use_not_our_mpi=yes
 
@@ -31,7 +33,16 @@ if [ "${use_sys_mpi}" = "yes" ] ; then
     fi
 
   else
-    echo 'use_mpi : MPI not found. We use exlib/mpi/dummy_mpi.h.'
+    mpi_home=/usr
+
+    if [ ! -d ${mpi_home}/include/openmpi-x86_64 ] ; then
+      echo 'use_mpi : MPI not found. We use exlib/mpi/dummy/mpi.h.'
+    else
+      cppflags="${cppflags} -DEXLIB_USE_NATIVE_MPI"
+      cppflags="${cppflags} -I${mpi_home}/include/openmpi-x86_64"
+      libs="${libs} -L${mpi_home}/${lib}/openmpi/lib -lmpi_cxx -lmpi"
+    fi
+
   fi
 
 fi

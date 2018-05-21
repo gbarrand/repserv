@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_zlib}" = "yes" ] ; then
 if [ "${build_use_not_our_zlib}" = "yes" ] ; then
@@ -21,6 +23,10 @@ if [ "${use_sys_zlib}" = "yes" ] ; then
 fi
 
 if [ "${use_our_zlib}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/zlib : variable ourex_home not defined.';exit
+  fi
+  zlib_home=${ourex_home}/zlib
   ourex_pack_name=zlib
   . ${bush_home}/use/ourex_use
 fi

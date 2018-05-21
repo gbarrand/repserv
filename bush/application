@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 #////////////////////////////////////
 #////////////////////////////////////
@@ -25,12 +27,19 @@ if [ ${build_clean} = "yes" ] ; then
 fi
 
 . ${bush_home}/compile
-	  
+
+file_exe=
+
 if [ "${build_app}" = "no" ] ; then
   if [ ${build_verbose} = yes ] ; then
     echo "bush/application : do not build app."
   fi
-  file_exe=${build_path}/${app_exe}
+  if [ ${build_sdk_android} = "yes" ] ; then
+    echo dummy > /dev/null
+  else
+    file_exe=${build_path}/${app_exe}
+  fi
+  
 else #build_app
 
 app_base_name=`basename ${app_src}`
@@ -42,6 +51,7 @@ if [ "${suffix}" = "${app_base_name}" ] ; then suffix=none;fi
 obj="${build_path}/main.o"
 
 link_it=no
+app_linker="${cpp_linker} ${cpp_linker_flags}"
 
 old_build_do_compile=${build_do_compile}
 if [ ${build_compile_main_only} = "yes" ] ; then build_do_compile=yes;fi
@@ -102,6 +112,26 @@ elif [ "${suffix}" = "mm" ] ; then
   objs="${obj} ${objs}"
   link_it=yes
 
+elif [ "${suffix}" = "f" ] ; then
+
+  if [ ${build_verbose} = yes ] ; then
+    echo "bush/application : compile ${app_src} ..."
+  fi
+
+  if [ ${build_do_compile} = "yes" ] ; then
+    use_f77=yes
+    . ${bush_home}/use/f77
+    eval ${f77_compiler} ${f77flags} -c -o ${obj} ${app_src}
+    use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi
+  fi
+
+  objs="${obj} ${objs}"
+  libs="${libs} ${f77libs}"
+
+  app_linker=${f77_linker}
+
+  link_it=yes
+
 elif [ "${suffix}" = "java" ] ; then
 
   if [ ${build_verbose} = yes ] ; then
@@ -111,40 +141,8 @@ elif [ "${suffix}" = "java" ] ; then
   plugin=lib${app}
   if [ ${build_plugin} = "yes" ] ; then . ${bush_home}/plugin; fi
 
-  if [ ${build_sdk_android} = "yes" ] ; then
-    if [ ${build_verbose} = yes ] ; then
-      echo "bush/application : android java part ..."
-    fi
-
-    ${bush_home}/check_app ant 'ant program not found. Arrange to have it in your PATH.'
-    use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi
-
-    save_dir=`pwd`
-    cd ../Android
-    /bin/cp ./ant.properties tmp_props
-    echo 'out.dir=../mgr/bin_sdk_android' >> ant.properties
-    #cat ant.properties    
-
-    /bin/rm -R -f ./libs
-    /bin/mkdir -p ./libs/armeabi
-    /bin/cp ${save_dir}/${build_path}/lib${app}.so ./libs/armeabi/
-
-    ant -silent release
-
-    /bin/mv tmp_props ./ant.properties
-    cd ${save_dir}
-
-    build_pwd=android
-
-    # due to a bug in SDK 22 and Android 2.2 we sign again :
-    app_apk="${build_path}/${app}-release-unaligned.apk" 
-    /bin/mv ${build_path}/${app}-release-unsigned.apk ${app_apk}
-    jarsigner -keystore ../Android/${app}.jks -storepass ${build_pwd} -keypass ${build_pwd} ${app_apk} ${app}
-    ${sdk_home}/tools/zipalign -f 4 ${app_apk} ${build_path}/${app}-release.apk
-    /bin/rm -f ${app_apk}
-
-  fi
-
+  # build of the .apk done in app_distrib.
+  
   link_it=no
 
 elif [ "${suffix}" = "ecpp" ] ; then
@@ -173,7 +171,7 @@ else
   if [ ${build_verbose} = yes ] ; then
     echo "bush/application : link ${file_exe} ..."
   fi
-  eval ${cpp_linker} ${linker_flags} -o ${file_exe} ${objs} ${libs}
+  eval ${app_linker} ${linker_flags} -o ${file_exe} ${objs} ${libs}
   use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi
     
   #/bin/rm -f ${objs}

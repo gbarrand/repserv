@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # NOTE : zip uses zlib.
 
@@ -24,6 +26,10 @@ if [ "${use_sys_zip}" = "yes" ] ; then
 fi
 
 if [ "${use_our_zip}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/zip : variable ourex_home not defined.';exit
+  fi
+  zip_home=${ourex_home}/zip
   ourex_pack_name=zip
   . ${bush_home}/use/ourex_use
 fi

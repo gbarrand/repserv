@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_expat}" = "yes" ] ; then
 if [ "${build_use_not_our_expat}" = "yes" ] ; then
@@ -20,6 +22,11 @@ if [ "${use_sys_expat}" = "yes" ] ; then
 fi
 
 if [ "${use_our_expat}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/expat : variable ourex_home not defined.';exit
+  fi
+  expat_home=${ourex_home}/expat
+  
   ourex_pack_name=expat
   . ${bush_home}/use/ourex_use
 fi

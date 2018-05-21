@@ -1,9 +1,13 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 # to be sourced in <app>/mgr/build scripts.
 
 if [ ${build_visual} = "yes" ] ; then
-  echo "bush/app_trailer : NOTE : today -DEXLIB_HAS_GL_VBO not supported."
-
+  if [ ${build_verbose} = yes ] ; then  
+    echo "bush/app_GL_VBO : NOTE : today -DEXLIB_HAS_GL_VBO not supported."
+  fi
+  
 elif [ "${build_cocoa}" = "yes" -o "${build_cocoa_gnu}" = "yes" ] ; then
   cppflags="${cppflags} -DEXLIB_HAS_GL_VBO"
 
@@ -13,7 +17,7 @@ elif [ "${build_ios}" = "yes" -o "${build_ios_gnu}" = "yes" -o "${build_iossim}"
 elif [ "${build_android}" = "yes" ] ; then
   cppflags="${cppflags} -DEXLIB_HAS_GL_VBO"
 
-elif [ ${build_x11_no_gl} = "yes" ] ; then
+elif [ ${build_no_gl} = "yes" ] ; then
   echo dummy > /dev/null
 
 else
@@ -26,7 +30,9 @@ else
       cppflags="${cppflags} -DEXLIB_HAS_GL_VBO"
     else
       # NOTE : Linux to remote X11 : EXLIB_HAS_GL_VBO crashes
-      echo "bush/app_trailer : NOTE : cpp macro EXLIB_HAS_GL_VBO not set."
+      if [ ${build_verbose} = yes ] ; then  
+        echo "bush/app_GL_VBO : NOTE : cpp macro EXLIB_HAS_GL_VBO not set."
+      fi
     fi
   fi
 fi

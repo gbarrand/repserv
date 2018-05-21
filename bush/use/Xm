@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_Xm}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -9,53 +11,40 @@ if [ "${use_Xm}" = "yes" ] ; then
   #             Error : Unresolved inheritance operation
   
   #//////////////////////////////////////////////
-  #/// Xt : /////////////////////////////////////
+  #//////////////////////////////////////////////
   #//////////////////////////////////////////////
   if [ `uname` = Darwin ] ; then
-    use_dirs="/opt/local /usr"
+    inc_dirs="/opt/local/include /usr/include /usr/X11/include"
   else
-    use_dirs="/usr"
+    inc_dirs="/usr/X11R6/include /usr/include"
   fi
-  Xt_home=
-  for item in ${use_dirs} ; do
-    if [ -f ${item}/include/X11/Intrinsic.h ] ; then
-      Xt_home=${item}
-      break
-    fi
-  done
-  if [ "${Xt_home}" = "" ] ; then
-    echo "bush/use/Xm : include/X11/Intrinsic.h not found under directories :"
-    echo "  ${use_dirs}"
-    exit
-  fi
+  inc_to_find=Xm/Xm.h
+  . ${bush_home}/find_inc
+  inc_to_find=X11/Intrinsic.h
+  . ${bush_home}/find_inc
+
   #//////////////////////////////////////////////
-  #/// Xm : /////////////////////////////////////
+  #//////////////////////////////////////////////
   #//////////////////////////////////////////////
   if [ `uname` = Darwin ] ; then
-    use_dirs="/opt/local /usr"
+    lib_dirs="/opt/local/${lib} /usr/${lib} /usr/X11/${lib}"
   else
-    use_dirs="/usr"
+    lib_dirs="/usr/X11R6/${lib} /usr/${lib} /usr/lib/x86_64-linux-gnu"
   fi
-  Xm_home=
-  for item in ${use_dirs} ; do
-    if [ -d ${item}/include/Xm ] ; then
-      Xm_home=${item}
-      break
-    fi
-  done
-  if [ "${Xm_home}" = "" ] ; then
-    echo "bush/use/Xm : include/Xm not found under directories :"
-    echo "  ${use_dirs}"
-    exit
-  fi
-  #//////////////////////////////////////////////
-  #//////////////////////////////////////////////
-
-  cppflags="${cppflags} -I${Xm_home}/include"
-  ccflags="${ccflags} -I${Xm_home}/include"
-
   # WARNING : Xmu must be after Xm.
-  libs="${libs} -L${Xm_home}/${lib} -lXm -lXmu -lXt"
-  libs="${libs} -lXi -lXext"
+  lib_to_find=Xm
+  . ${bush_home}/find_lib
+  lib_to_find=Xmu
+  . ${bush_home}/find_lib
+  lib_to_find=Xt
+  . ${bush_home}/find_lib
+  lib_to_find=Xi
+  . ${bush_home}/find_lib
+  lib_to_find=Xext
+  . ${bush_home}/find_lib
+
+  #//////////////////////////////////////////////
+  #//////////////////////////////////////////////
+  #//////////////////////////////////////////////
 
 fi

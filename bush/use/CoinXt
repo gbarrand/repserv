@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_CoinXt}" = "yes" ] ; then
 if [ "${build_use_not_our_CoinXt}" = "yes" ] ; then
@@ -15,6 +17,11 @@ if [ "${use_sys_CoinXt}" = "yes" ] ; then
 fi
 
 if [ "${use_our_CoinXt}" = "yes" ] ; then
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/CoinXt : variable ourex_home not defined.';exit
+  fi
+  CoinXt_home=${ourex_home}/CoinXt
+  
   if [ ${build_visual} = "yes" ] ; then
     echo "bush/use/CoinXt : build_visual : not available with this compiler."
     exit

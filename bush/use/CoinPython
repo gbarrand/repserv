@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_CoinPython}" = "yes" ] ; then
 if [ "${build_use_not_our_CoinPython}" = "yes" ] ; then
@@ -15,9 +17,10 @@ if [ "${use_sys_CoinPython}" = "yes" ] ; then
 fi
 
 if [ "${use_our_CoinPython}" = "yes" ] ; then
-  if [ "${CoinPython_home}" = "" ] ; then
-    echo 'bush/use/CoinPython : variable CoinPython_home not defined.';exit
+  if [ "${ourex_home}" = "" ] ; then
+    echo 'bush/use/CoinPython : variable ourex_home not defined.';exit
   fi
+  CoinPython_home=${ourex_home}/CoinPython
 
   cppflags="${cppflags} -I${CoinPython_home}"
 

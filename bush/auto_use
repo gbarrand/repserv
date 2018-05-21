@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${auto_use_pack}" = "" ] ; then
   echo 'bush/auto_use : variable auto_use_pack not defined.'
@@ -8,7 +10,7 @@ fi
 #/// look for an //${auto_use_pack}_build_use in ${auto_use_file} file ////
 #//////////////////////////////////////////////////////////////////////////
 
-app_uses=`grep ${auto_use_pack}_build_use ${auto_use_file}`
+app_uses="`grep ${auto_use_pack}_build_use ${auto_use_file}`"
 if [ "${app_uses}" != "" ] ; then
   app_uses=`echo ${app_uses} | sed -e "s:${auto_use_pack}_build_use::g"`
   for item in ${app_uses} ; do
@@ -22,7 +24,23 @@ if [ "${app_uses}" != "" ] ; then
   done
 fi
 
-app_cppfiles=`grep ${auto_use_pack}_build_cppfile ${auto_use_file}`
+app_uses="`grep ${auto_use_pack}_Linux_build_use ${auto_use_file}`"  # used in exlib/examples/cpp/cube_SoQt.cpp
+if [ "${app_uses}" != "" ] ; then
+  if [ `uname` = "Linux" ] ; then
+    app_uses=`echo ${app_uses} | sed -e "s:${auto_use_pack}_Linux_build_use::g"`
+    for item in ${app_uses} ; do
+      #echo "set use_${item}"
+      if [ ${item} = "//" -o ${item} = '/*' -o ${item} = '*/' -o ${item} = '#' ] ; then
+        echo dummy > /dev/null
+      else
+        use_var="use_${item}"
+        eval ${use_var}=yes
+      fi
+    done
+  fi
+fi
+
+app_cppfiles="`grep ${auto_use_pack}_build_cppfile ${auto_use_file}`"
 if [ "${app_cppfiles}" != "" ] ; then
   app_cppfiles=`echo ${app_cppfiles} | sed -e "s:${auto_use_pack}_build_cppfile::g"`
   for item in ${app_cppfiles} ; do
@@ -34,12 +52,12 @@ if [ "${app_cppfiles}" != "" ] ; then
 fi
 
 # default is use_archive=yes
-app_use_shlib=`grep ${auto_use_pack}_use_shlib ${auto_use_file}`
+app_use_shlib="`grep ${auto_use_pack}_use_shlib ${auto_use_file}`"
 if [ "${app_use_shlib}" != "" ] ; then
   use_archive=no
 fi
 
-app_cppflags=`grep ${auto_use_pack}_build_cppflags ${auto_use_file}`
+app_cppflags="`grep ${auto_use_pack}_build_cppflags ${auto_use_file}`"
 if [ "${app_cppflags}" != "" ] ; then
   app_cppflags=`echo ${app_cppflags} | sed -e "s:${auto_use_pack}_build_cppflags::g"`
   for item in ${app_cppflags} ; do
@@ -49,7 +67,19 @@ if [ "${app_cppflags}" != "" ] ; then
   done
 fi
 
-#app_compilers=`grep ${auto_use_pack}_build_compiler ${auto_use_file}`
+#app_visual_cppflags="`grep ${auto_use_pack}_build_visual_cppflags ${auto_use_file}`"
+#if [ "${app_visual_cppflags}" != "" ] ; then
+#  app_visual_cppflags=`echo ${app_visual_cppflags} | sed -e "s:${auto_use_pack}_build_visual_cppflags::g"`
+#  for item in ${app_visual_cppflags} ; do
+#    if [ ${item} != "//" ] ; then
+#      if [ ${build_visual} = "yes" ] ; then
+#        cppflags="${cppflags} ${item}"
+#      fi
+#    fi
+#  done
+#fi
+
+#app_compilers="`grep ${auto_use_pack}_build_compiler ${auto_use_file}`"
 #if [ "${app_compilers}" != "" ] ; then
 #  app_compilers=`echo ${app_compilers} | sed -e "s:${auto_use_pack}_build_compiler::g"`
 #  for item in ${app_compilers} ; do
@@ -106,9 +136,9 @@ if [ ${build_visual} = "yes" ] ; then
     exit
   fi
 else
-  if [ "${use_win32}" = "yes" ] ; then
+  if [ "${use_Windows}" = "yes" ] ; then
     if [ ${build_verbose} = yes ] ; then
-      echo "bush/auto_use : use_win32 and build_visual=no are not compatible. Skip ${auto_use_file}."
+      echo "bush/auto_use : use_Windows and build_visual=no are not compatible. Skip ${auto_use_file}."
     fi
     exit
   fi

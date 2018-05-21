@@ -1,3 +1,5 @@
+# Copyright (C) 2010, Guy Barrand. All rights reserved.
+# See the file bush.license for terms.
 
 if [ "${use_SDL}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
@@ -6,6 +8,12 @@ if [ "${use_SDL}" = "yes" ] ; then
   fi
 
   if [ `uname` = Darwin ] ; then
+
+    if [ ! -d /opt/local/include/SDL ] ; then
+      echo 'bush/use/SDL : SDL not found under /opt/local/include.'
+      exit
+    fi
+
     ccflags="${ccflags} -I/opt/local/include"
     cppflags="${cppflags} -I/opt/local/include"
 
