@@ -1,8 +1,15 @@
 
  To build :
-   cd ./inexlib/exlib/mgr
-   ./build -v ../apps/repserv.cpp      # -v to see what is compiled. -x to have a full verbosity.
-   ./build ../apps/term_repserv_client.cpp
+          UNIX> cd ./inexlib/exlib/mgr
+ [macOS,Linux]> ./build -v ../apps/repserv.cpp      # -v to see what is compiled. -x to have a full verbosity.
+          UNIX> ./build ../apps/term_repserv_client.cpp
+
+ (here UNIX is for Linux, macOS, Windows-10/cygwin, but repserv had not been ported on Windows-10/cygwin)
+
+  If the GNU parallel application is known from your prompt, you can use the "-parallel"
+ option so that C and C++ file compilations are distributed on your cores. This feature
+ had been tested with success on macOS with a MacPorts installation of the GNU parallel program
+ and on centos7 by using the GNU distribution. It clearly boosts the build of the ourex externals.
 
  To run :
    ./bin_[gnu,clang]/repserv -verbose &
@@ -18,7 +25,7 @@
  to specify another host (default is 0.0.0.0) and port (default is 54123) : 
    ./bin_[gnu,clang]/repserv -host=<ip> -port=<num_port>
 
- To unfold some "pyramids" seen from TouchSky and accessed with the repserv :
+ To unfold some "pyramids of fits" seen from TouchSky and accessed with the repserv :
    cd ../../../data/
    mkdir -p ~/Documents/repserv
    unzip -q M51_large.pfits.zip
