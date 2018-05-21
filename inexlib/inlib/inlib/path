@@ -213,6 +213,20 @@ inline bool is_cpp(const std::string& a_path){
   return false;
 }
 
+//used in OpenPAW, BatchLab.
+inline bool is_python(const std::string& a_path){
+  std::string sfx = suffix(a_path);
+
+  //tolowercase(sfx);
+  for(std::string::iterator it=sfx.begin();it!=sfx.end();++it) {
+    char c = *it;
+    *it = ((c) >= 'A' && (c) <= 'Z' ?  c - 'A' + 'a' : c);
+  }
+
+  if(sfx=="py") return true;
+  return false;
+}
+
 }
 
 #endif

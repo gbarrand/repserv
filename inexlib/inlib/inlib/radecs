@@ -117,7 +117,7 @@ template <class VEC>
 inline void radecs_center(const double a_radecs[8],double a_sky_radius,std::vector<VEC>& a_vcs,VEC& a_center) {
   a_vcs.resize(4);
   a_center.set_value(0,0,0);
-  double d2r = inlib::deg2rad();
+  double d2r = deg2rad();
   double _ra,_dec,x,y,z;
   typedef typename VEC::elem_t T;
  {for(unsigned int corner=0;corner<4;corner++) {
@@ -140,7 +140,7 @@ inline double amodulo(double a_angle) {
 }
 
 inline void radecs_center(const double a_radecs[8],double a_ra,double a_dec) {
-  double d2r = inlib::deg2rad();
+  double d2r = deg2rad();
   a_ra = amodulo(a_radecs[0]*d2r);
   a_dec = amodulo(a_radecs[1]*d2r);
  {for(unsigned int corner=1;corner<4;corner++) {
@@ -154,7 +154,7 @@ inline void radecs_center(const double a_radecs[8],double a_ra,double a_dec) {
 
 inline bool solid_angle(const double a_radecs[8],double a_sky_radius,double& a_solid) {
   // a_radecs in dec deg. a_solid in radian**2
-  std::vector<inlib::vec3d> vcs;
+  std::vector<vec3d> vcs;
   vec3d center;
   radecs_center(a_radecs,a_sky_radius,vcs,center);
   vec3d c01 = vcs[1]-vcs[0];

@@ -36,7 +36,7 @@ public:
     }
 
     std::vector<SDSS::star> stars;
-    inlib::search_stars(m_catalog,radecs,m_sky_radius,stars);
+    search_stars(m_catalog,radecs,m_sky_radius,stars);
     inlib_vforcit(SDSS::star,stars,it) {
       double ra,dec;
       (*it).radec(ra,dec);

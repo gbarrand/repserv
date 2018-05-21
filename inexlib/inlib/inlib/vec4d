@@ -14,8 +14,11 @@ class vec4d : public vec4<double> {
 public:
   vec4d():parent() {}
   vec4d(const double a_vec[4]):parent(a_vec) {}
-  vec4d(const double& a0,const double& a1,const double& a2,const double& a3,bool a_inc = true)
-  :parent(a0,a1,a2,a3,a_inc){}
+#ifdef INLIB_MEM
+  vec4d(const double& a0,const double& a1,const double& a2,const double& a3,bool a_inc = true):parent(a0,a1,a2,a3,a_inc){}
+#else
+  vec4d(const double& a0,const double& a1,const double& a2,const double& a3):parent(a0,a1,a2,a3){}
+#endif
   virtual ~vec4d() {}
 public:
   vec4d(const vec4d& a_from):parent(a_from){}

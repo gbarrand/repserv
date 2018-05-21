@@ -57,6 +57,16 @@ inline bool is_gzip(unsigned int a_sz,const char* a_buffer,bool& a_is){
   return true;
 }
 
+inline bool is_heprep(unsigned int a_sz,const char* a_buffer,bool& a_is){
+  unsigned int num = 1023; //same logic as in fileis.
+  if(a_sz<=num) {a_is = false;return false;}
+  char old = a_buffer[num];
+  ((char*)a_buffer)[num] = 0; //to have a C string.
+  a_is = ::strstr(a_buffer,"<heprep")?true:false;
+  ((char*)a_buffer)[num] = old;
+  return true;
+}
+
 inline char* search_cstr(const char* a_beg,const char* a_end,const char* a_cstr) {
   size_t lcstr = ::strlen(a_cstr);
   const char* cend = a_cstr+lcstr;

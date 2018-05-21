@@ -57,6 +57,13 @@ public:
   void left_mul_rotate(const double& a_x,const double& a_y,const double& a_z,const double& a_angle) {
     parent::left_mul_rotate(a_x,a_y,a_z,a_angle,::sin,::cos);
   }
+
+  template <class VEC>
+  void set_rotate(const VEC& a_dir,double a_angle) {
+    //WARNING : a_dir must be a normalized vector.
+    parent::set_rotate(a_dir[0],a_dir[1],a_dir[2],a_angle,::sin,::cos);
+  }
+
 public: //backward compatibility
   void mul_2d(double& a_x,double& a_y) const {
     parent::mul_2(a_x,a_y);

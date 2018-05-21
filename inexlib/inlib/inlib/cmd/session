@@ -27,7 +27,7 @@ public:
 #ifdef INLIB_MEM
     mem::increment(s_class().c_str());
 #endif
-    m_verbose = a_args.is_arg(inlib::s_arg_verbose());
+    m_verbose = a_args.is_arg(s_arg_verbose());
     m_can_shutdown = a_args.is_arg(s_arg_can_shutdown());
     if(m_verbose) ::printf("inlib::cmd::session::session() : %lu\n",(unsigned long)this);
     dir::home(m_home);
