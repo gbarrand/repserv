@@ -1,15 +1,15 @@
 /**
 
-@page inexlib_py_introduction Introduction
+@page repserv_introduction Introduction
 
-  inexlib_py is the collection of exlib examples related to Python put in a standalone package
+  repserv is the collection of exlib examples related to Python put in a standalone package
  and distribution.
 
   There are little applications written in C++, that activates Python through its library and
  a set of .py scripts that demonstrate how to activate inlib/exlib from a Python prompt. All
  these use the SWIG wrapping of some (but not all) classes of inlib and exlib.
 
-  C++ apps (in 1.0.0) (source code in inexlib_py/inexlib/exlib/examples/cpp) :
+  C++ apps (in 1.0.0) (source code in repserv/inexlib/exlib/examples/cpp) :
 @verbatim
     hello_py.cpp            # to check Python activation from C++.
     h1d_spy.cpp             # inlib histogram wrapped with swig.
