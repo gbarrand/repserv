@@ -8,11 +8,15 @@ exlib_home=${bush_home}/../inexlib/exlib
 what=""
 
 build_verbose=no
+build_verbose_name=no
+build_all_args=
 build_args=
 
 while test $# -ge 1 ; do
+  build_all_args="${build_all_args} $1"
   case $1 in
     -v) build_verbose=yes;build_args="${build_args} $1";;
+    -verbose_name) build_verbose_name=yes;;
     -*) build_args="${build_args} $1";;
      *) if [ $# = 1 ] ; then what=$1; else echo "unknown option : $1"; fi;;
   esac
@@ -39,6 +43,8 @@ if [ "${what}" = "" ] ; then
   done
 
   # NOTE : for exas, we use the local build script.
+  if [ ${build_verbose_name} = yes ] ; then build_args="${build_args} -verbose_name";fi
+  
   find ../examples/cpp -maxdepth 1 -name '*.cpp' -type f -exec ./build_exa ${build_args} {} \;
 
   exit
@@ -94,7 +100,7 @@ name=`echo ${name} | sed -e "s:\.${suffix}::g"`
 #////////////////////////////////////
 if [ "${file_java}" = yes ] ; then exit;fi
 
-if [ "${suffix}" = "f" -o "${suffix}" = "lua" -o "${suffix}" = "icc" -o "${suffix}" = "pyc" -o "${suffix}" = "py" -o "${suffix}" = "gmk" ] ; then
+if [ "${suffix}" = "lua" -o "${suffix}" = "icc" -o "${suffix}" = "pyc" -o "${suffix}" = "py" -o "${suffix}" = "gmk" -o "${suffix}" = "shader" ] ; then
   if [ ${build_verbose} = yes ] ; then
     echo "exlib/mgr/build : suffix ${suffix} not treated.";
   fi
@@ -115,8 +121,33 @@ if [ ${name} = "README" ] ; then exit;fi
 #////////////////////////////////////
 #////////////////////////////////////
 #////////////////////////////////////
-if [ ${build_verbose} = yes ] ; then
+
+if [ ${build_verbose} = yes -o ${build_verbose_name} = yes ] ; then
   echo "exlib/mgr/build : ${what} in group ${group} ..."
+fi
+
+if [ ${name} = "iv2wall" -o ${name} = "iv2bsg" -o ${name} = "iv2png" ] ; then
+  build_args="${build_args} -bin_batch -inlib_gl"
+  echo "exlib/build : ${name} : enforce -bin_batch -inlib_gl."
+fi
+
+. ${bush_home}/on_where
+
+build_geant4_10x=yes
+if [ ${group} = "geant4" -o ${name} = "gdml_read" -o ${base_name} = geant4.cpp ] ; then
+  if [ ${on_my_win_xp} = yes ] ; then
+    echo 'enforce geant4/95 on this machine.'
+    build_geant4_10x=no
+  else    
+    if [ ${on_macpro4} = yes ] ; then #clang++ knows c++11, but we do not have libc++ here.
+      build_args="${build_args} -gnu"
+    fi	
+    build_args="${build_args} -c++11 -bdir_suffix=_c++11"
+  fi
+fi
+
+if [ ${name} = "term_cling" ] ; then
+  build_args="${build_args} -c++11 -bdir_suffix=_c++11"
 fi
 
 . ${bush_home}/exlib_header
@@ -151,6 +182,7 @@ if [ ${group} = "apps" ] ; then
 fi
 if [ ${group} = "tests" ] ; then
   is_app=yes
+  if [ ${suffix} = "none" ] ; then is_app=no;fi #tests/op_func.
 fi
 
 objs=""
@@ -173,6 +205,11 @@ fi
 auto_use_pack=exlib
 auto_use_file="${what}"
 . ${bush_home}/auto_use
+
+if [ "${use_csz}" = "yes" ] ; then
+  cppflags="${cppflags} -DINLIB_USE_CSZ"
+fi
+
 #//////////////////////////////////////////////////////////
 #//////////////////////////////////////////////////////////
 #//////////////////////////////////////////////////////////
@@ -180,26 +217,74 @@ auto_use_file="${what}"
 if [ ${is_app} = "yes" ] ; then
   #echo dummy > /dev/null
 
-  if [ ${name} = "utest" ] ; then
-    if [ ${build_visual} = "yes" ] ; then
-      cppflags="${cppflags} -bigobj"
+  if [ ${name} = "term_cling" ] ; then
+    . ${bush_home}/use_cling
+    if [ "${cling_home}" = "" ] ; then
+      echo "exlib/mgr/build : cling_home not defined."
+      exit
     fi
+    if [ ${build_mem} = "yes" ] ; then pch_cpp_flags="${pch_cpp_flags} -DINLIB_MEM"; fi
+    if [ ${build_mem_atexit} = "yes" ] ; then pch_cpp_flags="${pch_cpp_flags} -DINLIB_MEM_ATEXIT"; fi
+    pch_cpp_flags="${pch_cpp_flags} -I../../inlib -I.."
+    pch_cpp_flags="${pch_cpp_flags} -I../../ourex/gl2ps -I../../ourex/freetype/include"
+    pch_cpp_flags="${pch_cpp_flags} -I../../ourex/expat/include"
+    pch_cpp_flags="${pch_cpp_flags} -I/usr/X11/include"
+   #pch_cpp_flags="${pch_cpp_flags} -femit-all-decls"
+    ${cling_home}/bin/clang++ -x c++-header ${pch_cpp_flags} ../exlib/cling/X11_pch.h -o exlib_X11.pch
   fi
 
-  if [ ${name} = "iv2wall" -o ${name} = "iv2bsg" ] ; then
+  if [ ${name} = "utest" -o ${name} = "rslua" -o ${name} = "rspy" ] ; then
+    if [ ${build_visual} = "yes" ] ; then cppflags="${cppflags} -bigobj";fi
+  fi
+
+  if [ ${name} = "iv2wall" -o ${name} = "iv2bsg" -o ${name} = "iv2png" ] ; then
     if [ ${build_visual} = "yes" ] ; then
-      use_win32=yes
+      use_Windows=yes
+    else
+      if [ `uname` = "Linux" ] ; then
+        use_thread=yes
+      fi
     fi
+    use_GL=no
+    echo "exlib/build : ${name} : disconnect use/GL."
+  fi
+
+  if [ ${name} = "aida_cern_root" ] ; then
+    if [ "${ROOTSYS}" = "" ] ; then
+      echo "exlib/mgr/build : to build ${name} you have to 'source setup' CERN-ROOT."
+      exit
+    fi
+
+    #////////////////////////////////////////////////
+    #// look if root-config is around : /////////////
+    #////////////////////////////////////////////////
+    ${bush_home}/check_app root-config 'root-config program not found. You have to <source setup> CERN-ROOT.'
+    use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi
+
+    cern_root_cxx="`root-config --cxx`"
+
+    if [ `uname` = "Darwin" ] ; then
+      # NOTE : CERN-ROOT does not compile with clang++ 3.0.
+      if [ "${cpp_compiler}" != "g++" ] ; then
+        if [ "${cern_root_cxx}" = "g++" ] ; then
+          echo "exlib/mgr/build : CERN-ROOT built with g++. Required compiler is ${cpp_compiler}."
+          exit
+        fi
+      fi
+    fi
+
+    #////////////////////////////////////////////////
+    #// Generating the CINT wrapping : //////////////
+    #////////////////////////////////////////////////
+    eval `root-config --bindir`/rootcint -f G__exlib.cpp -c -I${inlib_home} -I${exlib_home} ${exlib_home}/exlib/cern_root/exlib_def.h ${exlib_home}/exlib/cern_root/exlib_LinkDef.h
+    cppfiles="${cppfiles} ./G__exlib.cpp"
+    to_rm="${to_rm} G__exlib.cpp G__exlib.h"
   fi
 
 else # lib
 
   if [ "${sub_group}" = "app" -a ${group} = "Cocoa" ] ; then echo 'bypass exlib/app/Cocoa group.';exit;fi
-  if [ "${sub_group}" = "app" -a ${group} = "iOS" ] ; then echo 'bypass exlib/app/Cocoa group.';exit;fi
-
-  if [ ${group} = "Windows" ] ; then
-    if [ ${build_visual} != "yes" ] ; then exit;fi
-  fi
+  if [ "${sub_group}" = "app" -a ${group} = "iOS" ] ; then echo 'bypass exlib/app/iOS group.';exit;fi
 
   if [ ${group} = "cern_root" ] ; then
     if [ "${ROOTSYS}" = "" ] ; then
@@ -292,6 +377,7 @@ else # lib
       plugin=${name}
       pyname=${name}
       cppfiles="${cppfiles} ${what}"
+      if [ ${build_visual} = "yes" ] ; then cppflags="${cppflags} -bigobj";fi
     fi
 
     if [ ${base_name} = "exlib_swig.i" ] ; then
@@ -321,6 +407,7 @@ else # lib
       plugin=${name}
       pyname=${name}
       cppfiles="${cppfiles} ${what}"
+      if [ ${build_visual} = "yes" ] ; then cppflags="${cppflags} -bigobj";fi
     fi
 
   fi
@@ -342,6 +429,7 @@ else # lib
       is_plugin=yes
       plugin=${name}
       cppfiles="${cppfiles} ${what}"
+      if [ ${build_visual} = "yes" ] ; then cppflags="${cppflags} -bigobj";fi
     fi
 
     if [ ${base_name} = "exlib_swig.i" ] ; then
@@ -368,9 +456,10 @@ else # lib
       is_plugin=yes
       plugin=${name}
       cppfiles="${cppfiles} ${what}"
+      if [ ${build_visual} = "yes" ] ; then cppflags="${cppflags} -bigobj";fi
 
       if [ ${build_visual} = "yes" ] ; then
-        use_win32=yes
+        use_Windows=yes
       else
         use_X11=yes
         use_GLX=yes
@@ -456,14 +545,26 @@ fi
 if [ ${suffix} = "i" ] ; then
   use_swig=yes
 fi
+if [ "${suffix}" = "f" ] ; then
+  use_f77=yes
+fi
 
 if [ "${use_screen}" = "yes" ] ; then
   if [ ${build_visual} = "yes" ] ; then
-    use_win32=yes
+    use_Windows=yes
   else
     use_X11=yes
     use_GLX=yes
   fi
+fi
+
+if [ ${build_no_gl} = "yes" ] ; then
+  if [ ${build_visual} = "yes" ] ; then
+    use_DirectX=yes
+  else	
+    use_GLX=no
+  fi
+  use_GL=no
 fi
 
 if [ "${use_cexpr}" = "yes" ] ; then
@@ -481,14 +582,17 @@ fi
 . ${bush_home}/use/gtk
 . ${bush_home}/use/gtkglarea
 
+. ${bush_home}/use/wx
 . ${bush_home}/use/Qt
 . ${bush_home}/use/Xm
 . ${bush_home}/use/XmOpenGLArea
 . ${bush_home}/use/Android
 
+. ${bush_home}/use/Xt
 . ${bush_home}/use/GLX # before X11
 . ${bush_home}/use/X11
-. ${bush_home}/use/win32
+. ${bush_home}/use/Windows
+. ${bush_home}/use/DirectX
 
 #/////////////////////////////////
 #/// graphics : //////////////////
@@ -513,11 +617,15 @@ fi
 . ${bush_home}/use/sqlite
 . ${bush_home}/use/Python
 . ${bush_home}/use/lua
+. ${bush_home}/use/cling
 . ${bush_home}/use/graphviz
 . ${bush_home}/use/dcmtk
 . ${bush_home}/use/gsl
 . ${bush_home}/use/gmp
+. ${bush_home}/use/arb
+. ${bush_home}/use/flint
 . ${bush_home}/use/wcslib
+. ${bush_home}/use/curl
 
 . ${bush_home}/use/tntnet  # it needs zip
 . ${bush_home}/use/zip     # it needs zlib
@@ -525,17 +633,27 @@ fi
 . ${bush_home}/use/hdf5    # it needs zlib
 . ${bush_home}/use/zlib
 . ${bush_home}/use/Getline
+. ${bush_home}/use/KUIP
 
 . ${bush_home}/use/swig
 . ${bush_home}/use/yacc
 
 . ${bush_home}/use/mpi
+. ${bush_home}/use/qftxx
 
-. ${bush_home}/use/geant4
+if [ ${build_geant4_10x} = yes ] ; then
+  . ${bush_home}/use/geant4_10_03_p01
+else
+  . ${bush_home}/use/geant4
+fi
+
 . ${bush_home}/use/AIDA
 . ${bush_home}/use/cern_root # :-(
-. ${bush_home}/use/cernlib   # :-(
 . ${bush_home}/use/pythia8
+
+. ${bush_home}/use/f77       # :-(
+. ${bush_home}/use/cernlib   # :-(
+. ${bush_home}/use/minicern  # :-(
 
 . ${bush_home}/use/socket
 . ${bush_home}/use/thread
@@ -584,14 +702,14 @@ elif [ ${is_plugin} = "yes" ] ; then
 
   if [ ${is_py_plugin} = "yes" ] ; then
     if [ "${use_our_Python}" = "yes" ] ; then
-      echo "exlib/mgr/build : WARNING : Python plugins mechanism not available wiht ourex/Python."
+      echo "exlib/mgr/build : WARNING : Python plugins mechanism not available with ourex/Python."
     fi
   fi
 
   . ${bush_home}/compile
   . ${bush_home}/plugin
 
-  if [ "${is_so_plugin}" = "yes" ] ; then
+  if [ "${is_so_plugin}" = "yes" -a "${pgex}" != "so" ] ; then
     /bin/mv ${file_plugin} ${build_path}/${name}.so
   fi
 
@@ -702,7 +820,11 @@ TAIL_END
 
 else
 
-  cppfiles="${cppfiles} ${what}"
+  if [ "${suffix}" = "f" ] ; then
+    f77files="${f77files} ${what}"
+  else	
+    cppfiles="${cppfiles} ${what}"
+  fi      
 
   . ${bush_home}/compile
 
