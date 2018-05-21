@@ -40,7 +40,10 @@
  When done in a way or another, to see the M51_large pyramid :
    GUI> home -> Some pyrfits -> Set host -> <choose your host>
    GUI> home -> Some pyrfits -> M51_large
- 
+
+ For LAL wall getting .pfits on ubuntu OpenStack 134.158.75.40 :
+   ./bin_gnu/repserv -port=23541 -verbose
+
  See the Youtube demo (French and some English) of TouchSky for more and
  pages of TouchSky from our web portal :
    http://softinex.lal.in2p3.fr
