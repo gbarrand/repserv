@@ -2,8 +2,6 @@
 
 save_dir=`pwd`
 
-inlib_mgr=../../inlib/mgr
-
 bush_home=../../../bush
 ${bush_home}/check_app _incs '_incs not found.'
 use_status=$?;if [ ${use_status} != 0 ] ; then exit ${use_status};fi
@@ -99,6 +97,9 @@ find ./cxxtools-2.2rc4/include/cxxtools -maxdepth 1 -name '*' -type d -exec /bin
 #
 /bin/cp ./modified/cxxtools/char.h ./cxxtools/include/cxxtools/.
 /bin/cp ./modified/tntnet/util.h ./tntnet/framework/common/tnt/.
+/bin/cp ./modified/cxxtools/date.cpp ./cxxtools/src/.
+
+/bin/cp ./modified/cxxtools/settingswriter.cpp ./cxxtools/src/.
 
 
 exit

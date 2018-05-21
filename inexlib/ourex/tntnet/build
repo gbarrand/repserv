@@ -28,6 +28,11 @@ if [ ${build_clang} = "yes" -o ${build_sdk_mac} = "yes" -o ${build_sdk_ios} = "y
   cppflags="${cppflags} -Wno-deprecated-declarations"
 fi
 
+if [ ${build_gnu} = "yes" ] ; then
+  # for warning in cxxtools/src/tcpsocket.cpp about std::auto_ptr deprecated.
+  cppflags="${cppflags} -Wno-deprecated-declarations"
+fi
+
 if [ `uname` = "Linux" ] ; then
   cppflags="${cppflags} -Wno-unused-result"
 fi
@@ -57,16 +62,22 @@ done
 if [ "`uname | grep CYGWIN`" != "" ] ; then
   cppfiles="${cppfiles} ./cxxtools/src/atomicity.windows.cpp"
 elif [ `uname` = Darwin ] ; then
-  if [ `uname -m` = i386 ] ; then
-    cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86.cpp"
-  else
-    cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86_64.cpp"
-  fi
+  #processor=`${bush_home}/processor "${cpp_compiler}"`
+  #if [ `uname -m` = i386 ] ; then
+  #  WARNING : wall machines pass here but are x86_64 !
+  #  cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86.cpp"
+  #else
+     cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86_64.cpp"
+  #fi
 elif [ `uname -m` = x86_64 ] ; then
   cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86_64.cpp"
 else
   cppfiles="${cppfiles} ./cxxtools/src/atomicity.gcc.x86.cpp"
 fi
+
+#/bin/rm -f cc_tmp
+#/bin/rm -f cpp_tmp
+#cppfiles="./cxxtools/src/settingswriter.cpp"
 
 if [ "`uname | grep CYGWIN`" != "" ] ; then
   echo "cxxtools : Windows not yet supported."

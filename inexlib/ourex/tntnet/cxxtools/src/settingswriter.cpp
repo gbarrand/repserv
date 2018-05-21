@@ -29,6 +29,12 @@
 
 namespace cxxtools {
 
+#if defined(__APPLE__) && defined(__clang_major__) && (__clang_major__>=9) && defined(__clang_minor__) && (__clang_minor__>=1)
+#define std_endl '\n'
+#else  
+#define std_endl std::endl
+#endif
+  
 void SettingsWriter::write(const cxxtools::SerializationInfo& si)
 {
     cxxtools::SerializationInfo::ConstIterator it;
@@ -39,7 +45,7 @@ void SettingsWriter::write(const cxxtools::SerializationInfo& si)
             String value;
             it->getValue(value);
             this->writeEntry( it->name(), value, it->typeName() );
-            *_os << std::endl;
+            *_os << std_endl; //G.Barrand : std::endl => std_endl.
         }
         else if( it->category() == cxxtools::SerializationInfo::Object)
         {
@@ -49,7 +55,7 @@ void SettingsWriter::write(const cxxtools::SerializationInfo& si)
                 *_os << cxxtools::String::widen( it->name() ) << cxxtools::String(L" = ");
                 *_os << cxxtools::String::widen( it->typeName() ) << cxxtools::String(L"{ ");
                 this->writeParent( *it, "");
-                *_os << cxxtools::String(L" }") << std::endl;
+                *_os << cxxtools::String(L" }") << std_endl; //G.Barrand : std::endl => std_endl.
                 continue;
             }
 
@@ -71,14 +77,14 @@ void SettingsWriter::writeParent(const cxxtools::SerializationInfo& sd, const st
             String value;
             it->getValue(value);
             this->writeEntry( it->name(), value, it->typeName() );
-            *_os << std::endl;
+            *_os << std_endl; //G.Barrand : std::endl => std_endl.
         }
         else if( it->category() == cxxtools::SerializationInfo::Object )
         {
             *_os << cxxtools::String::widen( prefix ) << '.' << cxxtools::String::widen( it->name() ) << cxxtools::String(L" = ");
             *_os<< cxxtools::String::widen( it->typeName() ) << cxxtools::String(L"{ ");
             this->writeChild(*it);
-            *_os << cxxtools::String(L" }") << std::endl;
+            *_os << cxxtools::String(L" }") << std_endl; //G.Barrand : std::endl => std_endl.
         }
     }
 }
@@ -157,7 +163,7 @@ void SettingsWriter::writeEntry(const std::string& name, const cxxtools::String&
 
 void SettingsWriter::writeSection(const cxxtools::String& prefix)
 {
-    *_os << cxxtools::String(L"[") << prefix << cxxtools::String(L"]") << std::endl;
+    *_os << cxxtools::String(L"[") << prefix << cxxtools::String(L"]") << std_endl; //G.Barrand : std::endl => std_endl.
 }
 
 }

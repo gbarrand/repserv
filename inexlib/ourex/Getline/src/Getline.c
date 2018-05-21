@@ -3,7 +3,7 @@
  * On Windows, need to link with user32.
  */
 
-#include "../Getline/Getline.h" /*G.Barrand : to get the namespace protection. */
+#include "../Getline/ourex_Getline.h" /*G.Barrand : to get the namespace protection. */
 
 /*
  * Copyright (C) 1991, 1992 by Chris Thewalt (thewalt@ce.berkeley.edu)
@@ -498,7 +498,7 @@ gl_char_cleanup()               /* undo effects of gl_char_init */
 
 #if defined(MSDOS) && !defined(_WIN32)
 #  include <conio.h>
-   int pause_()
+   int Gl_pause_() /*G.Barrand : Gl_*/
    {
       int first_char;
         first_char = _getch();
@@ -508,7 +508,7 @@ gl_char_cleanup()               /* undo effects of gl_char_init */
 #endif
 
 #if defined(MSDOS) && defined(_WIN32)
-int pause_()
+int Gl_pause_() /*G.Barrand : Gl_*/
 {
  static HANDLE hConsoleInput = NULL;
  static iCharCount = 0;
@@ -580,7 +580,7 @@ gl_getc()
     int locate_(int *,int *);
     int ixc, iyc;
 # endif
-    int pause_();
+    int Gl_pause_(); /*G.Barrand : Gl_*/
 #endif
 
     int c;
@@ -592,7 +592,7 @@ gl_getc()
 #endif
 
 #ifdef MSDOS
-    c = pause_();
+    c = Gl_pause_(); /*G.Barrand : Gl_*/
      if (c < 0) {
          switch (c) {
            case k_up_arr: c =  'P' - '@';   /* up -> ^P = 16 */
@@ -1883,6 +1883,12 @@ static void gl_exch( void )
 
 /* G.Barrand */
 #ifdef _WIN32
+int Gl_is_valid() {
+  HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
+  if((h==NULL)||(h==INVALID_HANDLE_VALUE)) return 0;
+  return 1;
+}
+
 int Gl_is_there_stdin_input(int* aIs) {
   //FIXME : should check that stdin is the terminal (and not a file).
 
@@ -1892,6 +1898,11 @@ int Gl_is_there_stdin_input(int* aIs) {
   KEY_EVENT_RECORD* KeyEvent;
 
   if (!hConsoleInput) hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+
+  if((hConsoleInput==NULL)||(hConsoleInput==INVALID_HANDLE_VALUE)) { /*G.Barrand*/
+    *aIs = 0;
+    return 0;
+  }
 
   //FIXME : Have a "wait for" console input ? (from MSDN ReadConsoleInput)
 
@@ -1922,6 +1933,8 @@ int Gl_is_there_stdin_input(int* aIs) {
 #include <unistd.h>
 #include <sys/time.h>
 #define MAXIMUM(a,b) ((a)>(b)?(a):(b))
+
+int Gl_is_valid() {return 1;}
 
 int Gl_is_there_stdin_input(int* aIs) {
   int fd_in;
