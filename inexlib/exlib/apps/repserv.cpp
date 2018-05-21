@@ -268,7 +268,7 @@ int main(int argc,char* argv[]){
 
    {std::map<std::string,std::string> _args;
     std::string sargs; //space separated args : "-key1=value1 -key2=value2 ..."
-    std::vector<std::string> v = args.tovector();
+    std::vector<std::string> v;args.to_vector(v);
     inlib_vforcit(std::string,v,it) {
       sargs += " ";
       sargs += *it;

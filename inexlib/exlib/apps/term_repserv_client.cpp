@@ -3,7 +3,7 @@
 
 //exlib_build_use inlib Getline socket
 
-#include <Getline/Getline.h>
+#include <Getline/ourex_Getline.h>
 
 #ifdef INLIB_MEM
 #include <inlib/mem>
